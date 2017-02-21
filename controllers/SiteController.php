@@ -7,7 +7,9 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\ContactForm;
+use yii\web\UploadedFile;
+use app\models\UploadImage;
+use app\models\Notes;
 
 class SiteController extends Controller
 {
@@ -46,10 +48,6 @@ class SiteController extends Controller
             'error' => [
                 'class' => 'yii\web\ErrorAction',
             ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
         ];
     }
 
@@ -60,8 +58,27 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $model = new Notes();
+
+        if ($model->load(Yii::$app->request->post())) {
+            $upload = new UploadImage();
+            $upload->picture = UploadedFile::getInstance($model, 'path_to_image');
+            if($upload->picture != null) {
+                $upload->picture->saveAs('uploads/' . $upload->picture->name);
+                $model->path_to_image = $upload->picture->name;
+            }
+            $model->user_id = 1;
+            if($model->validate()){
+                // изменить когда появится регистрация на like $user->id
+                $model->save();
+
+                return $this->renderAjax('index', ['model' => $model]);
+            }
+        } else {
+            return $this->render('index', ['model' => $model]);
+        }
     }
+
 
     /**
      * Login action.
@@ -93,33 +110,5 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }
