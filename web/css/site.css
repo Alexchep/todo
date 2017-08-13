@@ -1,6 +1,10 @@
 html,
 body {
     height: 100%;
+    background-image: url(../note.jpg);
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-attachment: fixed;
 }
 
 .wrap {
@@ -116,4 +120,71 @@ a.desc:after {
 
 #alert-div{
     display: none;
+}
+
+.note{
+    width: 30%;
+    height: 200px;
+    background-color: rgba(187, 195, 255, 0.8);
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 30px;
+    float: left;
+    margin: 15px;
+    padding: 20px;
+}
+
+.note h3{
+    color: #204d74;
+    margin-bottom: 15px;
+}
+
+.note p{
+    color: #122b40;
+}
+
+.control_buttons{
+     text-align: right;
+     margin-top: 30px;
+     padding-bottom: 10px;
+ }
+
+.control_buttons span{
+    padding: 5px;
+}
+
+.control_buttons span:hover{
+    cursor: pointer;
+    background-color: #2aabd2;
+    border-radius: 10px;
+}
+
+.view-img img{
+    width: 300px;
+    height: 250px;
+}
+
+.site-index{
+    color: #fff;
+    font-size: 15pt;
+}
+
+.note-view{
+    color: #fff;
+    height: 410px;
+}
+
+.info-view{
+    height: 100%;
+    padding-left: 50px;
+}
+
+.buttons-view{
+    position: absolute;
+    bottom: 0;
+}
+
+.img-for-view img{
+    width: 600px;
+    height: 400px;
 }

@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
-use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use app\models\Notes;
@@ -14,17 +13,9 @@ class NoteController extends Controller
 {
     public function actionIndex()
     {
-        $query = Notes::find();
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-        ]);
+        $notes = Notes::find()->all();
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', ['notes' => $notes]);
     }
 
     public function actionView($id)
@@ -44,13 +35,15 @@ class NoteController extends Controller
             if($upload->picture != null) {
                 $upload->picture->saveAs('uploads/' . $upload->picture->name);
                 $model->path_to_image = $upload->picture->name;
-                $model->user_id = 1;
-                if($model->validate()){
-                    // изменить когда появится регистрация на like $user->id
-                    $model->save();
+            }
 
-                    return $this->redirect(['view', 'id' => $model->id]);
-                }
+            $model->user_id = 1;
+
+            if($model->validate()){
+                // изменить когда появится регистрация на like $user->id
+                $model->save();
+
+                return $this->redirect(['index', 'id' => $model->id]);
             }
         } else {
             return $this->renderAjax('create', [
@@ -62,8 +55,26 @@ class NoteController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $post = Yii::$app->request->post('Notes');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($post) {
+
+            $model->title = $post['title'];
+            $model->text = $post['text'];
+            $img = isset($post['path_to_img']) ? $post['path_to_img'] : null;
+
+            if (!is_null($img)) {
+                $upload = new UploadImage();
+                $upload->picture = UploadedFile::getInstance($model, 'path_to_image');
+
+                if($upload->picture != null) {
+                    $upload->picture->saveAs('uploads/' . $upload->picture->name);
+                    $model->path_to_image = $upload->picture->name;
+                }
+            }
+
+            $model->save();
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [

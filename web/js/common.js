@@ -10,7 +10,7 @@ $(function(){
 
 
 // Флеш сообщение и отправка главной формы аяксом
-$('body').on( 'submit', '#main-note-form', function() {
+$('#main-note-form').on('submit', function() {
     var form = $('#main-note-form');
     $.ajax({
         url: '/site/index',

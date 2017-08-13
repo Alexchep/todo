@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use \yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "notes".
@@ -16,7 +17,7 @@ use Yii;
  *
  * @property Users $user
  */
-class Notes extends \yii\db\ActiveRecord
+class Notes extends ActiveRecord
 {
     /**
      * @inheritdoc

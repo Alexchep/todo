@@ -1,13 +1,10 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\bootstrap\Modal;
 use \yii\helpers\Url;
-use \yii\widgets\Pjax;
 
 $this->title = 'My notes';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="notes-index">
 
@@ -32,29 +29,17 @@ $this->params['breadcrumbs'][] = $this->title;
     Modal::end();
     ?>
 
-    <?php Pjax::begin(['enablePushState' => false]) ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'title',
-            'text',
-            [
-                'label' => 'Image',
-                'attribute' => 'path_to_pic',
-                'value' => function($data){
-                    return Html::img(Url::toRoute('@web/uploads/'. $data->path_to_image),[
-                        'alt' => $data->title,
-                        'style' => 'width: 50px; height: 50px'
-                    ]);
-                },
-                'format' => 'raw',
-            ],
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-    <?php Pjax::end() ?>
+    <?php foreach($notes as $note): ?>
+        <div class='note'>
+            <h3><?php echo $note->title; ?></h3>
+            <p><?php echo $note->text; ?></p>
+            <span><b><?php echo $note->date_of_create; ?></b></span>
+            <div class="control_buttons">
+                <?= Html::a('<span class="glyphicon glyphicon-eye-open" id="view_note">', ['view', 'id' => $note->id]) ?>
+                <?= Html::a('<span class="glyphicon glyphicon-edit" id="edit_note">', ['update', 'id' => $note->id]) ?>
+                <?= Html::a('<span class="glyphicon glyphicon-trash" id="delete_note">', ['delete', 'id' => $note->id]) ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
 
 </div>
